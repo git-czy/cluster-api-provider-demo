@@ -1,0 +1,20 @@
+# permissions for end users to view metalnodes.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: metalnode-viewer-role
+rules:
+- apiGroups:
+  - metal.metal.node
+  resources:
+  - metalnodes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - metal.metal.node
+  resources:
+  - metalnodes/status
+  verbs:
+  - get
