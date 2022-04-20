@@ -31,8 +31,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	infrastructurev1beta1 "cluster-api-provider-demo/api/v1beta1"
-	"cluster-api-provider-demo/controllers"
+	infrastructurev1beta1 "github.com/git-czy/cluster-api-provider-demo/api/v1beta1"
+	"github.com/git-czy/cluster-api-provider-demo/controllers"
 	//+kubebuilder:scaffold:imports
 )
 
