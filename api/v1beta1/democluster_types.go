@@ -23,9 +23,9 @@ import (
 )
 
 const (
-	// ClusterFinalizer allows DockerClusterReconciler to clean up resources associated with DemoCluster before
+	// ClusterFinalizer allows ReconcileDemoMachine to clean up resources associated with metalNode before
 	// removing it from the apiserver.
-	ClusterFinalizer = "democluster.infrastructure.cluster.x-k8s.io"
+	ClusterFinalizer = "demomachine.infrastructure.cluster.x-k8s.io"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!

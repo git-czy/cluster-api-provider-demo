@@ -31,10 +31,10 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
-	infrav1 "cluster-api-provider-demo/api/v1beta1"
-	"cluster-api-provider-demo/constants"
-	metav1beta1 "cluster-api-provider-demo/metalnode/api/v1beta1"
-	"cluster-api-provider-demo/utils/log"
+	metav1beta1 "github.com/git-czy/cluster-api-metalnode/api/v1beta1"
+	infrav1 "github.com/git-czy/cluster-api-provider-demo/api/v1beta1"
+	"github.com/git-czy/cluster-api-provider-demo/constants"
+	"github.com/git-czy/cluster-api-provider-demo/utils/log"
 )
 
 // DemoClusterReconciler reconciles a DemoCluster object

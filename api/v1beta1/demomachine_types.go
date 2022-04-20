@@ -21,6 +21,12 @@ import (
 	clusterv1 "sigs.k8s.io/cluster-api/api/v1beta1"
 )
 
+const (
+	// ClusterFinalizer allows ReconcileDemoMachine to clean up resources associated with metalNode before
+	// removing it from the apiserver.
+	MachineFinalizer = "demomachine.infrastructure.cluster.x-k8s.io"
+)
+
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
@@ -45,7 +51,11 @@ type DemoMachineStatus struct {
 
 	//Bootstrapped means that the machine already has bootstrapped
 	// +optional
-	Bootstrapped string `json:"bootstrapped"`
+	Bootstrapped bool `json:"bootstrapped"`
+
+	// Addresses contains the associated addresses for the demo machine.
+	// +optional
+	Addresses []clusterv1.MachineAddress `json:"addresses,omitempty"`
 
 	// Conditions defines current service state of the DemoMachine.
 	// +optional
