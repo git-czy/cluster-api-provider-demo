@@ -25,7 +25,7 @@ spec:
   controlPlaneRef:
     apiVersion: controlplane.cluster.x-k8s.io/v1beta1
     kind: KubeadmControlPlane
-    name: controlplane
+    name: demo-controlplane
     namespace: demo-cluster
   infrastructureRef:
     apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
@@ -36,7 +36,7 @@ spec:
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: DemoMachineTemplate
 metadata:
-  name: controlplane
+  name: demo-controlplane
   namespace: demo-cluster
 spec:
   template:
@@ -45,16 +45,16 @@ spec:
 apiVersion: controlplane.cluster.x-k8s.io/v1beta1
 kind: KubeadmControlPlane
 metadata:
-  name: controlplane
+  name: demo-controlplane
   namespace: demo-cluster
 spec:
   replicas: 1
-  version: v1.23.3
+  version: v1.23.6
   machineTemplate:
     infrastructureRef:
       apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
       kind: DemoMachineTemplate
-      name: controlplane
+      name: demo-controlplane
       namespace: demo-cluster
   kubeadmConfigSpec:
     clusterConfiguration:
@@ -63,6 +63,7 @@ spec:
           - localhost
           - 127.0.0.1
           - 0.0.0.0
+      imageRepository: registry.aliyuncs.com/google_containers
       controllerManager:
         extraArgs:
           enable-hostpath-provisioner: "true"
@@ -84,7 +85,7 @@ spec:
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: DemoMachineTemplate
 metadata:
-  name: worker
+  name: demo-worker
   namespace: demo-cluster
 spec:
   template:
@@ -93,7 +94,8 @@ spec:
 apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
 kind: KubeadmConfigTemplate
 metadata:
-  name: worker
+  name: demo-worker
+  namespace: demo-cluster
 spec:
   template:
     spec:
@@ -108,7 +110,8 @@ spec:
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: MachineDeployment
 metadata:
-  name: worker-md-0
+  namespace: demo-cluster
+  name: demo-worker-md-0
 spec:
   clusterName: demo-cluster
   replicas: 1
@@ -117,14 +120,14 @@ spec:
       cluster.x-k8s.io/cluster-name: demo-cluster
   template:
     spec:
-      version: v1.23.3
+      version: v1.23.6
       clusterName: demo-cluster
       bootstrap:
         configRef:
           apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
           kind: KubeadmConfigTemplate
-          name: worker
+          name: demo-worker
       infrastructureRef:
         apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
         kind: DemoMachineTemplate
-        name: worker
+        name: demo-worker

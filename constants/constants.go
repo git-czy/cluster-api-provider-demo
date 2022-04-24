@@ -37,4 +37,10 @@ const (
 
 	// DeletingReason (Severity=Info) documents a condition not in Status=True because the underlying object it is currently being deleted.
 	DeletingReason = "Deleting"
+
+	//WaitingForMetalNodeReadyReason (Severity=Info) documents a DemoMachine waiting for the metal node initialized
+	WaitingForMetalNodeReadyReason = "WaitingForMetalNodeReady"
+
+	//WaitingForMetalNodeBootstrapReason (Severity=Info) documents a DemoMachine waiting for the metal node bootstrap
+	WaitingForMetalNodeBootstrapReason = "WaitingForMetalNodeBootstrap"
 )

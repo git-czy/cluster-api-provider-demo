@@ -18,7 +18,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 	"sigs.k8s.io/cluster-api/util/conditions"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -46,8 +45,8 @@ type DemoClusterReconciler struct {
 //+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=democlusters,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=democlusters/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=democlusters/finalizers,verbs=get;update;patch
-//+kubebuilder:rbac:groups=metal.metal.node,resources=metalnodes,verbs=get;list
-//+kubebuilder:rbac:groups=metal.metal.node,resources=metalnodes/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=bocloud.io,resources=metalnodes,verbs=get;list
+//+kubebuilder:rbac:groups=bocloud.io,resources=metalnodes/status,verbs=get;update;patch
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -133,6 +132,10 @@ func (r *DemoClusterReconciler) reconcileDelete(ctx context.Context, demoCluster
 func (r *DemoClusterReconciler) reconcileNormal(ctx context.Context, demoCluster *infrav1.DemoCluster, cluster *clusterv1.Cluster) (ctrl.Result, error) {
 	// todo reconcile normal logic here
 
+	if demoCluster.Status.Ready {
+		return ctrl.Result{}, nil
+	}
+
 	log.Info("preparing load balancer")
 	// todo 这里一般回来检查 demoCluster是否配置好,按照docker provider的做法 应该创建一个load_balancer
 	// todo 事实上从官方搭建高可用文档的案列来看 也是这么做的
@@ -145,15 +148,32 @@ func (r *DemoClusterReconciler) reconcileNormal(ctx context.Context, demoCluster
 	metalNodeList := &metav1beta1.MetalNodeList{}
 	if err := r.Client.List(ctx, metalNodeList, client.InNamespace(demoCluster.Namespace)); err != nil {
 		conditions.MarkFalse(demoCluster, constants.ControlPlaneEndPointSetCondition, constants.NoMetalNodeFoundReason, clusterv1.ConditionSeverityWarning, err.Error())
+		if apierrors.IsNotFound(err) {
+			log.Info("no metalnode found")
+			return ctrl.Result{}, nil
+		}
 		return ctrl.Result{}, err
 	}
 
-	if len(metalNodeList.Items) == 0 {
-		conditions.MarkFalse(demoCluster, constants.ControlPlaneEndPointSetCondition, constants.NoMetalNodeFoundReason, clusterv1.ConditionSeverityWarning, "no metal node found")
-		return ctrl.Result{}, fmt.Errorf("no metalnode found")
+	var controlPlaneNode *metav1beta1.MetalNode
+	for _, metalNode := range metalNodeList.Items {
+		if !metalNode.HasRole(constants.ControlPlaneNodeRoleValue) && !metalNode.HasRole(constants.WorkerNodeRoleValue) {
+			controlPlaneNode = &metalNode
+		}
 	}
 
-	controlPlaneNode := &metalNodeList.Items[0]
+	// todo 测试先直接指定metalNode了，当前目的是部署一个单master单worker的集群
+	//controlPlaneNode := &metav1beta1.MetalNode{}
+	//err := r.Client.Get(ctx, types.NamespacedName{Name: "metalnode-centos-148", Namespace: demoCluster.Namespace}, controlPlaneNode)
+	//if err != nil {
+	//	if apierrors.IsNotFound(err) {
+	//		conditions.MarkFalse(demoCluster, constants.ControlPlaneEndPointSetCondition, constants.NoMetalNodeFoundReason, clusterv1.ConditionSeverityWarning, "no metal node found")
+	//		log.Errorln("no metal node is eligible for control plane, please check the status and number of metal node")
+	//		return ctrl.Result{}, nil
+	//	}
+	//	log.Error(err, "failed to get metal node")
+	//	return ctrl.Result{}, err
+	//}
 
 	// set demoCluster controlPlaneEndpoint
 	demoCluster.Spec.ControlPlaneEndpoint = clusterv1.APIEndpoint{
@@ -170,6 +190,11 @@ func (r *DemoClusterReconciler) reconcileNormal(ctx context.Context, demoCluster
 
 	// Mark the demoCluster ready
 	demoCluster.Status.Ready = true
+
+	if err := controllerutil.SetOwnerReference(cluster, controlPlaneNode, r.Client.Scheme()); err != nil {
+		return ctrl.Result{}, err
+	}
+
 	conditions.MarkTrue(demoCluster, constants.ControlPlaneEndPointSetCondition)
 
 	return ctrl.Result{}, nil

@@ -7,6 +7,30 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
+  - bocloud.io
+  resources:
+  - metalnodes
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - bocloud.io
+  resources:
+  - metalnodes/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - cluster.x-k8s.io
+  resources:
+  - clusters
+  - machines
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
   - infrastructure.cluster.x-k8s.io
   resources:
   - democlusters
@@ -23,6 +47,8 @@ rules:
   resources:
   - democlusters/finalizers
   verbs:
+  - get
+  - patch
   - update
 - apiGroups:
   - infrastructure.cluster.x-k8s.io
@@ -49,6 +75,8 @@ rules:
   resources:
   - demomachines/finalizers
   verbs:
+  - get
+  - patch
   - update
 - apiGroups:
   - infrastructure.cluster.x-k8s.io

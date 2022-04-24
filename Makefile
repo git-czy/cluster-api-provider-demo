@@ -65,11 +65,12 @@ test: manifests generate fmt vet envtest ## Run tests.
 build: generate fmt vet ## Build manager binary.
 	go build -o bin/manager main.go
 
-
-
 .PHONY: run
-run: manifests generate fmt vet build ## Run a controller from your host.
-	#go run ./main.go
+run: install build ## Run a controller from your host.
+	go run ./main.go
+
+.PHONY: debug
+debug: manifests generate fmt vet build ## Run a controller from your host.
 	dlv --listen=:2345 --headless=true --api-version=2 --accept-multiclient exec ./bin/manager
 
 .PHONY: docker-build
