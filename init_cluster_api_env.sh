@@ -13,8 +13,12 @@ kind load docker-image ccr.ccs.tencentyun.com/oldcc/kubeadm-control-plane-contro
 kind load docker-image ccr.ccs.tencentyun.com/oldcc/kubeadm-bootstrap-controller:v1.1.3
 kind load docker-image ccr.ccs.tencentyun.com/oldcc/cluster-api-controller:v1.1.3
 
+kind load docker-image ccr.ccs.tencentyun.com/oldcc/cluster-api-provider-demo:latest
 kind load docker-image ccr.ccs.tencentyun.com/oldcc/metal-node-controller:latest
 kind load docker-image gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
+
+
+
 
 cd /home/centos/go/src/cluster-api-metalnode || exit && make deploy
 
