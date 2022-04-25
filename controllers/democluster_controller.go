@@ -175,6 +175,12 @@ func (r *DemoClusterReconciler) reconcileNormal(ctx context.Context, demoCluster
 	//	return ctrl.Result{}, err
 	//}
 
+	if controlPlaneNode == nil {
+		conditions.MarkFalse(demoCluster, constants.ControlPlaneEndPointSetCondition, constants.NoMetalNodeFoundReason, clusterv1.ConditionSeverityWarning, "")
+		log.Info("no metalnode found")
+		return ctrl.Result{}, nil
+	}
+
 	// set demoCluster controlPlaneEndpoint
 	demoCluster.Spec.ControlPlaneEndpoint = clusterv1.APIEndpoint{
 		Host: controlPlaneNode.Spec.NodeEndPoint.Host,

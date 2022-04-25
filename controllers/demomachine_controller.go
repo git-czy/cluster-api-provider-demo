@@ -49,7 +49,7 @@ type DemoMachineReconciler struct {
 //+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=demomachines/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=infrastructure.cluster.x-k8s.io,resources=demomachines/finalizers,verbs=get;update;patch
 //+kubebuilder:rbac:groups=cluster.x-k8s.io,resources=clusters;machines,verbs=get;list;watch
-//+kubebuilder:rbac:groups=bocloud.io,resources=metalnodes,verbs=get;list
+//+kubebuilder:rbac:groups=bocloud.io,resources=metalnodes,verbs=get;list;watch
 //+kubebuilder:rbac:groups=bocloud.io,resources=metalnodes/status,verbs=get;update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to

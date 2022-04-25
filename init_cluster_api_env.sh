@@ -21,12 +21,12 @@ kind load docker-image gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
 
 
 cd /home/centos/go/src/cluster-api-metalnode || exit && make deploy
+cd /home/centos/go/src/cluster-api-provider-demo || exit && make deploy
 
 
 
+#kubectl apply -f /home/centos/go/src/cluster-api-metalnode/config/samples/metal_v1beta1_metalnode.yaml
 
-kubectl apply -f /home/centos/go/src/cluster-api-metalnode/config/samples/metal_v1beta1_metalnode.yaml
-
-kubectl apply -f /home/centos/go/src/cluster-api-provider-demo/infrastructure-components.yaml
+#kubectl apply -f /home/centos/go/src/cluster-api-provider-demo/infrastructure-components.yaml
 
 clusterctl init
