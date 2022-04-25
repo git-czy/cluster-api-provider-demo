@@ -10,8 +10,9 @@
 
 ##### 2.1.部署前的准备
 
-1. 确保已经安装clusterctl
-2. 确保已经安装kind,并已经拉起一个集群
+1. 准备一台机器安装kind，kubectl
+2. 确保已经安装clusterctl
+3. 使用kind拉起一个集群
 
 cluster-api环境配置可参考init_cluster_api_env.sh脚本
 
@@ -19,30 +20,34 @@ cluster-api环境配置可参考init_cluster_api_env.sh脚本
 
 1. 部署[cluster-api-metalnode](https://github.com/git-czy/cluster-api-metalnode)项目
 
-2. 下载项目代码到您本地，并进入项目目录
+2. 初始化使用clusterctl 初始化cluster-api
 
-3. 执行make run可在集群外运行项目
+   ```
+   cluster init
+   ```
 
-4. 执行make deploy将controller部署到集群
+3. 下载项目代码到您本地，并进入项目目录
+
+4. 执行make run可在集群外运行项目
+
+5. 执行make deploy将controller部署到集群
 
    1. 如果部署失败，请提前下载一下镜像 使用kind导入到集群
 
       ```
       # iamges
       ccr.ccs.tencentyun.com/oldcc/cluster-api-provider-demo:latest
-      ccr.ccs.tencentyun.com/oldcc/metal-node-controller:latest
       
       kind load docker-image ccr.ccs.tencentyun.com/oldcc/cluster-api-provider-demo:latest
-      kind load docker-image ccr.ccs.tencentyun.com/oldcc/metal-node-controller:latest
       ```
 
-5. 发布集群
+6. 发布集群
 
    ```
    kubectl apply -f config/samples/demo-cluster.yaml
    ```
 
-6. 查看集群
+7. 查看集群
 
    ```
    clusterctl describe cluster demo-cluster --namespace demo-cluster
